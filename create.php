@@ -29,49 +29,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $classInfo = [
-    'warrior' => ['label' => 'Warrior', 'stats' => 'HP 100 · STR 40 · MANA 0',  'desc' => 'Brute force and intimidation. Unlocks combat-heavy paths.'],
-    'mage'    => ['label' => 'Mage',    'stats' => 'HP 60 · STR 15 · MANA 45',  'desc' => 'Arcane insight. Low HP but exclusive Mage-only choices.'],
-    'rogue'   => ['label' => 'Rogue',   'stats' => 'HP 70 · STR 25 · MANA 10',  'desc' => 'Stealth and deception. The natural fit for a city of secrets.'],
+    'warrior' => [
+        'label' => 'Warrior',
+        'stats' => "HP 100\nSTR 40\nMANA 0",
+        'desc'  => 'Brute force and intimidation. Unlocks combat-heavy paths.',
+    ],
+    'mage' => [
+        'label' => 'Mage',
+        'stats' => "HP 60\nSTR 15\nMANA 45",
+        'desc'  => 'Arcane insight. Low HP but exclusive Mage-only choices.',
+    ],
+    'rogue' => [
+        'label' => 'Rogue',
+        'stats' => "HP 70\nSTR 25\nMANA 10",
+        'desc'  => 'Stealth and deception. The natural fit for a city of secrets.',
+    ],
 ];
+
+$pageTitle = 'Choose Your Path';
+$bodyClass = 'create-page';
+require 'includes/layout.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Your Path — TaddleRPG</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="auth-page">
+
 <div class="create-card">
-    <h1 class="auth-title">Who are you?</h1>
-    <p class="auth-subtitle">Your name and class shape every choice ahead.</p>
+    <h1 class="create-title">Who are you?</h1>
+    <p class="create-sub">Your name and class shape every choice ahead.</p>
 
     <?php if ($error): ?>
-        <div class="error-message"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="create.php" class="auth-form">
-        <label for="name">Character name</label>
-        <input type="text" id="name" name="name" maxlength="30" required
-               placeholder="e.g. Kira"
-               value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+    <form method="POST" action="create.php">
+        <div class="field">
+            <label for="name">Character name</label>
+            <input type="text" id="name" name="name" maxlength="30"
+                   required placeholder="e.g. Kira"
+                   value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+        </div>
 
-        <label>Choose your class</label>
+        <label style="margin-bottom:0.5rem;display:block">Class</label>
         <div class="class-grid">
             <?php foreach ($classInfo as $key => $info): ?>
             <label class="class-option">
                 <input type="radio" name="class" value="<?= $key ?>"
                        <?= (($_POST['class'] ?? 'rogue') === $key) ? 'checked' : '' ?>>
-                <strong><?= $info['label'] ?></strong>
-                <span class="class-stats"><?= $info['stats'] ?></span>
-                <span class="class-desc"><?= $info['desc'] ?></span>
+                <span class="class-name"><?= $info['label'] ?></span>
+                <span class="class-stats"><?= nl2br(htmlspecialchars($info['stats'])) ?></span>
+                <span class="class-desc"><?= htmlspecialchars($info['desc']) ?></span>
             </label>
             <?php endforeach; ?>
         </div>
 
-        <button type="submit" class="btn-primary">Enter the city</button>
+        <button type="submit" class="btn btn-primary">Enter the city</button>
     </form>
 </div>
-</body>
-</html>
+
+<?php require 'includes/layout_foot.php'; ?>

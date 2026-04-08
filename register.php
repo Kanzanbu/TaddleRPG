@@ -25,39 +25,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register — TaddleRPG</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="auth-page">
-<div class="auth-card">
-    <h1 class="auth-title">TaddleRPG</h1>
-    <p class="auth-subtitle">Create your account to enter the city of secrets.</p>
 
+$pageTitle = 'Register';
+$bodyClass = 'auth-page';
+require 'includes/layout.php';
+?>
+
+<div class="auth-lockup">
+    <p class="auth-wordmark">TaddleRPG</p>
+    <h1 class="auth-title">Enter the City</h1>
+    <p class="auth-subtitle">Create your account to begin.</p>
+</div>
+
+<div class="auth-card">
     <?php if ($error): ?>
-        <div class="error-message"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <form method="POST" action="register.php" class="auth-form">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" maxlength="20" required
-               value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" minlength="6" required>
-
-        <label for="confirm">Confirm password</label>
-        <input type="password" id="confirm" name="confirm" minlength="6" required>
-
-        <button type="submit" class="btn-primary">Create account</button>
+        <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" maxlength="20"
+                   autocomplete="username" required
+                   value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
+        </div>
+        <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" minlength="6"
+                   autocomplete="new-password" required>
+        </div>
+        <div class="field">
+            <label for="confirm">Confirm password</label>
+            <input type="password" id="confirm" name="confirm" minlength="6"
+                   autocomplete="new-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem">Create account</button>
     </form>
 
     <p class="auth-switch">Already have an account? <a href="login.php">Log in</a></p>
 </div>
-</body>
-</html>
+
+<?php require 'includes/layout_foot.php'; ?>

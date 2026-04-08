@@ -4,30 +4,28 @@ require_once 'includes/session_guard.php';
 $leaderboard = $_SESSION['leaderboard'] ?? [];
 usort($leaderboard, fn($a, $b) => $b['score'] <=> $a['score']);
 
-$endingColors = [
-    'Heroic Victory'  => 'badge-heroic',
-    'Neutral Victory' => 'badge-neutral',
-    'Tragic Failure'  => 'badge-tragic',
-    'Secret Path'     => 'badge-secret',
+$pillMap = [
+    'Heroic Victory'  => 'pill-heroic',
+    'Neutral Victory' => 'pill-neutral',
+    'Tragic Failure'  => 'pill-tragic',
+    'Secret Path'     => 'pill-secret',
 ];
+
+$pageTitle = 'Leaderboard';
+$bodyClass = 'leaderboard-page';
+require 'includes/layout.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard — TaddleRPG</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="leaderboard-page">
+
 <div class="leaderboard-wrap">
-    <h1 class="leaderboard-title">Leaderboard</h1>
-    <p class="leaderboard-sub">Ranked by final score. The city remembers everyone.</p>
+    <div class="lb-header">
+        <h1 class="lb-title">Leaderboard</h1>
+        <p class="lb-subtitle">Ranked by final score. The city remembers everyone.</p>
+    </div>
 
     <?php if (empty($leaderboard)): ?>
-        <p class="no-entries">No runs completed yet. Finish a game to appear here.</p>
+        <p class="lb-empty">No runs completed yet. Finish a game to appear here.</p>
     <?php else: ?>
-        <table class="leaderboard-table">
+        <table class="lb-table">
             <thead>
                 <tr>
                     <th>#</th>
@@ -42,19 +40,19 @@ $endingColors = [
             </thead>
             <tbody>
                 <?php foreach ($leaderboard as $rank => $entry): ?>
-                <tr class="<?= $rank === 0 ? 'rank-first' : '' ?>">
-                    <td class="rank-num"><?= $rank + 1 ?></td>
+                <tr class="<?= $rank === 0 ? 'lb-rank-1' : '' ?>">
+                    <td class="td-rank"><?= $rank + 1 ?></td>
                     <td><?= htmlspecialchars($entry['username']) ?></td>
                     <td><?= htmlspecialchars($entry['name']) ?></td>
                     <td><?= htmlspecialchars(ucfirst($entry['class'])) ?></td>
-                    <td class="score-cell"><?= (int)$entry['score'] ?></td>
-                    <td class="faction-cell"><?= htmlspecialchars(ucfirst($entry['faction'] ?? '—')) ?></td>
+                    <td class="td-score"><?= (int)$entry['score'] ?></td>
+                    <td class="td-faction"><?= htmlspecialchars(ucfirst($entry['faction'] ?? '—')) ?></td>
                     <td>
-                        <span class="ending-badge <?= $endingColors[$entry['ending']] ?? '' ?>">
+                        <span class="ending-pill <?= $pillMap[$entry['ending']] ?? '' ?>">
                             <?= htmlspecialchars($entry['ending']) ?>
                         </span>
                     </td>
-                    <td class="date-cell"><?= htmlspecialchars($entry['timestamp']) ?></td>
+                    <td class="td-date"><?= htmlspecialchars($entry['timestamp']) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -62,9 +60,9 @@ $endingColors = [
     <?php endif; ?>
 
     <div class="lb-actions">
-        <a href="create.php" class="btn-primary">Play again</a>
-        <a href="logout.php" class="btn-secondary">Log out</a>
+        <a href="create.php" class="btn btn-primary">Play again</a>
+        <a href="logout.php" class="btn btn-secondary">Log out</a>
     </div>
 </div>
-</body>
-</html>
+
+<?php require 'includes/layout_foot.php'; ?>

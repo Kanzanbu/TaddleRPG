@@ -21,40 +21,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $error = 'Invalid username or password.';
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — TaddleRPG</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="auth-page">
-<div class="auth-card">
-    <h1 class="auth-title">TaddleRPG</h1>
-    <p class="auth-subtitle">The city remembers. Log back in.</p>
 
+$pageTitle = 'Login';
+$bodyClass = 'auth-page';
+require 'includes/layout.php';
+?>
+
+<div class="auth-lockup">
+    <p class="auth-wordmark">TaddleRPG</p>
+    <h1 class="auth-title">Welcome Back</h1>
+    <p class="auth-subtitle">The city remembers.</p>
+</div>
+
+<div class="auth-card">
     <?php if (isset($_GET['registered'])): ?>
-        <div class="success-message">Account created! Log in to begin.</div>
+        <div class="alert alert-success">Account created. Log in to begin.</div>
     <?php endif; ?>
 
     <?php if ($error): ?>
-        <div class="error-message"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <form method="POST" action="login.php" class="auth-form">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required
-               value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit" class="btn-primary">Enter the city</button>
+        <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"
+                   autocomplete="username" required
+                   value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
+        </div>
+        <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"
+                   autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem">Enter the city</button>
     </form>
 
     <p class="auth-switch">New here? <a href="register.php">Create an account</a></p>
 </div>
-</body>
-</html>
+
+<?php require 'includes/layout_foot.php'; ?>

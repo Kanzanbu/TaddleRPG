@@ -75,25 +75,29 @@ $nodeId   = $_SESSION['node'];
 $node     = $storyTree[$nodeId] ?? null;
 $hero     = $_SESSION['hero'];
 $progress = getGameProgress($hero, $storyTree);
+$dominant = resolveDominantFaction($hero);
+
+$pageTitle = 'TaddleRPG';
+$bodyClass = 'game-page';
+require 'includes/layout.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaddleRPG</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+
 <div class="game-layout">
+
+    <div class="game-topbar">
+        <span class="topbar-brand">TaddleRPG</span>
+        <span class="topbar-player"><?= htmlspecialchars($hero['name']) ?> · <?= ucfirst($hero['class']) ?></span>
+        <span class="topbar-score"><?= $hero['score'] ?> pts</span>
+    </div>
 
     <main class="story-panel">
         <?php if ($error): ?>
-            <div class="error-message"><?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <?php if ($node): ?>
             <div class="node-container">
+                <div class="node-act">Act</div>
                 <p class="story-text"><?= htmlspecialchars($node['text']) ?></p>
             </div>
 
@@ -105,85 +109,84 @@ $progress = getGameProgress($hero, $storyTree);
                         $msg     = $locked ? getLockedMessage($choice, $hero) : '';
                     ?>
                     <div class="choice-wrapper <?= $locked ? 'choice-locked' : '' ?>">
-                        <form method="POST" action="game.php">
+                        <form method="POST" action="game.php" class="choice-form">
                             <input type="hidden" name="choice_id" value="<?= htmlspecialchars($choice['id']) ?>">
                             <button type="submit"
-                                    class="choice-btn <?= $locked ? 'btn-locked' : 'btn-active' ?>"
+                                    class="choice-btn <?= $locked ? 'btn-locked' : '' ?>"
                                     <?= $locked ? 'disabled' : '' ?>>
                                 <?= htmlspecialchars($choice['text']) ?>
                             </button>
                         </form>
                         <p class="consequence-preview">
                             <?= $locked
-                                ? '🔒 ' . htmlspecialchars($msg)
-                                : '⚡ ' . htmlspecialchars($preview) ?>
+                                ? '✕ ' . htmlspecialchars($msg)
+                                : '› ' . htmlspecialchars($preview) ?>
                         </p>
                     </div>
                 <?php endforeach; ?>
             </div>
+
+            <div class="progress-wrap">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width:<?= $progress['percent'] ?>%"></div>
+                </div>
+                <p class="progress-label"><?= $progress['visited'] ?> / <?= $progress['total'] ?> nodes visited</p>
+            </div>
         <?php else: ?>
             <p>Node not found. <a href="game.php">Refresh</a></p>
         <?php endif; ?>
-
-        <div class="progress-bar-wrap">
-            <div class="progress-bar-fill" style="width:<?= $progress['percent'] ?>%"></div>
-        </div>
-        <p class="progress-label"><?= $progress['visited'] ?> / <?= $progress['total'] ?> nodes explored</p>
     </main>
 
     <aside class="stat-sidebar">
+
         <div class="sidebar-section">
-            <h3 class="sidebar-title">
-                <?= htmlspecialchars($hero['name']) ?>
-                <span class="class-badge class-<?= $hero['class'] ?>"><?= ucfirst($hero['class']) ?></span>
-            </h3>
+            <p class="sidebar-heading">Character</p>
+            <p class="hero-name"><?= htmlspecialchars($hero['name']) ?></p>
+            <span class="hero-class class-<?= $hero['class'] ?>"><?= ucfirst($hero['class']) ?></span>
 
             <div class="stat-row">
                 <span class="stat-label">HP</span>
-                <div class="stat-bar-bg"><div class="stat-bar-fill stat-health" style="width:<?= $hero['health'] ?>%"></div></div>
+                <div class="stat-track"><div class="stat-fill fill-hp" style="width:<?= $hero['health'] ?>%"></div></div>
                 <span class="stat-val"><?= $hero['health'] ?></span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">STR</span>
-                <div class="stat-bar-bg"><div class="stat-bar-fill stat-strength" style="width:<?= min(100, $hero['strength']) ?>%"></div></div>
+                <div class="stat-track"><div class="stat-fill fill-str" style="width:<?= min(100, $hero['strength']) ?>%"></div></div>
                 <span class="stat-val"><?= $hero['strength'] ?></span>
             </div>
             <?php if ($hero['mana'] > 0 || $hero['class'] === 'mage'): ?>
             <div class="stat-row">
                 <span class="stat-label">MANA</span>
-                <div class="stat-bar-bg"><div class="stat-bar-fill stat-mana" style="width:<?= min(100, $hero['mana']) ?>%"></div></div>
+                <div class="stat-track"><div class="stat-fill fill-mana" style="width:<?= min(100, $hero['mana']) ?>%"></div></div>
                 <span class="stat-val"><?= $hero['mana'] ?></span>
             </div>
             <?php endif; ?>
 
-            <div class="stat-score">
-                Score: <?= $hero['score'] ?>
-                <span class="score-projected"> → projected <?= calculateScore($hero) ?></span>
+            <div class="score-line">
+                <span><?= $hero['score'] ?> pts</span>
+                <span class="score-projected">→ <?= calculateScore($hero) ?> projected</span>
             </div>
         </div>
 
         <div class="sidebar-section">
-            <h4 class="sidebar-subtitle">Faction Trust</h4>
-            <?php
-                $dominant = resolveDominantFaction($hero);
-            ?>
+            <p class="sidebar-heading">Faction Trust</p>
             <?php foreach ($hero['faction_trust'] as $faction => $trust): ?>
             <div class="stat-row">
-                <span class="stat-label <?= $faction === $dominant ? 'dominant-faction' : '' ?>">
+                <span class="stat-label <?= $faction === $dominant ? 'is-dominant' : '' ?>">
                     <?= ucfirst($faction) ?>
                 </span>
-                <div class="stat-bar-bg"><div class="stat-bar-fill stat-faction" style="width:<?= $trust ?>%"></div></div>
+                <div class="stat-track"><div class="stat-fill fill-faction" style="width:<?= $trust ?>%"></div></div>
                 <span class="stat-val"><?= $trust ?></span>
             </div>
             <?php endforeach; ?>
             <?php if ($dominant !== 'none'): ?>
-                <p class="faction-hint">Dominant: <?= ucfirst($dominant) ?></p>
+                <p class="faction-dominant-label">Leading: <span><?= ucfirst($dominant) ?></span></p>
             <?php endif; ?>
         </div>
 
         <?php if (!empty($hero['inventory'])): ?>
         <div class="sidebar-section">
-            <h4 class="sidebar-subtitle">Inventory</h4>
+            <p class="sidebar-heading">Inventory</p>
             <ul class="inventory-list">
                 <?php foreach ($hero['inventory'] as $item): ?>
                     <li><?= htmlspecialchars(ucwords(str_replace('_', ' ', $item))) ?></li>
@@ -194,7 +197,7 @@ $progress = getGameProgress($hero, $storyTree);
 
         <?php if (!empty($hero['choices_log'])): ?>
         <div class="sidebar-section">
-            <h4 class="sidebar-subtitle">Your Path</h4>
+            <p class="sidebar-heading">Your Path</p>
             <ol class="choice-log">
                 <?php foreach ($hero['choices_log'] as $entry): ?>
                     <li><?= htmlspecialchars($entry['choice']) ?></li>
@@ -202,8 +205,9 @@ $progress = getGameProgress($hero, $storyTree);
             </ol>
         </div>
         <?php endif; ?>
+
     </aside>
 
 </div>
-</body>
-</html>
+
+<?php require 'includes/layout_foot.php'; ?>

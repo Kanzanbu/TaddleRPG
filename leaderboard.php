@@ -35,6 +35,7 @@ $endingColors = [
                     <th>Character</th>
                     <th>Class</th>
                     <th>Score</th>
+                    <th>Faction</th>
                     <th>Ending</th>
                     <th>Date</th>
                 </tr>
@@ -47,6 +48,7 @@ $endingColors = [
                     <td><?= htmlspecialchars($entry['name']) ?></td>
                     <td><?= htmlspecialchars(ucfirst($entry['class'])) ?></td>
                     <td class="score-cell"><?= (int)$entry['score'] ?></td>
+                    <td class="faction-cell"><?= htmlspecialchars(ucfirst($entry['faction'] ?? '—')) ?></td>
                     <td>
                         <span class="ending-badge <?= $endingColors[$entry['ending']] ?? '' ?>">
                             <?= htmlspecialchars($entry['ending']) ?>

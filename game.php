@@ -2,8 +2,13 @@
 require_once 'includes/session_guard.php';
 require_once 'includes/helpers.php';
 require_once 'includes/story_tree.php';
+require_once 'includes/game_logic.php';
 
 $error = '';
+
+if (!validateSession()) {
+    repairSession();
+}
 
 if (!isset($_SESSION['node']) && !empty($_COOKIE['taddle_node'])) {
     $saved = $_COOKIE['taddle_node'];
@@ -48,14 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setcookie('taddle_node', $choice['next'], time() + (86400 * 7), '/');
 
                 if ($_SESSION['hero']['health'] <= 0) {
-                    header('Location: ending.php?ending=tragic');
+                    header('Location: ending.php?ending=tragic_failure');
                     exit;
                 }
 
                 $next = $storyTree[$choice['next']] ?? null;
                 if (!empty($next['terminal'])) {
-                    $slug = strtolower(str_replace(' ', '_', $next['ending'] ?? 'unknown'));
-                    header('Location: ending.php?ending=' . urlencode($slug));
+                    $ending = resolveEnding($_SESSION['hero']);
+                    header('Location: ending.php?ending=' . urlencode($ending));
                     exit;
                 }
 
@@ -66,10 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$nodeId    = $_SESSION['node'];
-$node      = $storyTree[$nodeId] ?? null;
-$hero      = $_SESSION['hero'];
-$choiceLog = $hero['choices_log'] ?? [];
+$nodeId   = $_SESSION['node'];
+$node     = $storyTree[$nodeId] ?? null;
+$hero     = $_SESSION['hero'];
+$progress = getGameProgress($hero, $storyTree);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,6 +124,11 @@ $choiceLog = $hero['choices_log'] ?? [];
         <?php else: ?>
             <p>Node not found. <a href="game.php">Refresh</a></p>
         <?php endif; ?>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:<?= $progress['percent'] ?>%"></div>
+        </div>
+        <p class="progress-label"><?= $progress['visited'] ?> / <?= $progress['total'] ?> nodes explored</p>
     </main>
 
     <aside class="stat-sidebar">
@@ -146,18 +156,29 @@ $choiceLog = $hero['choices_log'] ?? [];
             </div>
             <?php endif; ?>
 
-            <div class="stat-score">Score: <?= $hero['score'] ?></div>
+            <div class="stat-score">
+                Score: <?= $hero['score'] ?>
+                <span class="score-projected"> → projected <?= calculateScore($hero) ?></span>
+            </div>
         </div>
 
         <div class="sidebar-section">
             <h4 class="sidebar-subtitle">Faction Trust</h4>
+            <?php
+                $dominant = resolveDominantFaction($hero);
+            ?>
             <?php foreach ($hero['faction_trust'] as $faction => $trust): ?>
             <div class="stat-row">
-                <span class="stat-label"><?= ucfirst($faction) ?></span>
+                <span class="stat-label <?= $faction === $dominant ? 'dominant-faction' : '' ?>">
+                    <?= ucfirst($faction) ?>
+                </span>
                 <div class="stat-bar-bg"><div class="stat-bar-fill stat-faction" style="width:<?= $trust ?>%"></div></div>
                 <span class="stat-val"><?= $trust ?></span>
             </div>
             <?php endforeach; ?>
+            <?php if ($dominant !== 'none'): ?>
+                <p class="faction-hint">Dominant: <?= ucfirst($dominant) ?></p>
+            <?php endif; ?>
         </div>
 
         <?php if (!empty($hero['inventory'])): ?>
@@ -171,11 +192,11 @@ $choiceLog = $hero['choices_log'] ?? [];
         </div>
         <?php endif; ?>
 
-        <?php if (!empty($choiceLog)): ?>
+        <?php if (!empty($hero['choices_log'])): ?>
         <div class="sidebar-section">
             <h4 class="sidebar-subtitle">Your Path</h4>
             <ol class="choice-log">
-                <?php foreach ($choiceLog as $entry): ?>
+                <?php foreach ($hero['choices_log'] as $entry): ?>
                     <li><?= htmlspecialchars($entry['choice']) ?></li>
                 <?php endforeach; ?>
             </ol>

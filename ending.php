@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/session_guard.php';
 require_once 'includes/helpers.php';
+require_once 'includes/game_logic.php';
 
 $hero       = $_SESSION['hero'] ?? [];
 $endingSlug = $_GET['ending'] ?? 'tragic_failure';
@@ -10,21 +11,15 @@ $endingMap = [
     'neutral_victory' => ['label' => 'Neutral Victory', 'css' => 'ending-neutral'],
     'tragic_failure'  => ['label' => 'Tragic Failure',  'css' => 'ending-tragic'],
     'secret_path'     => ['label' => 'Secret Path',     'css' => 'ending-secret'],
-    'tragic'          => ['label' => 'Tragic Failure',  'css' => 'ending-tragic'],
 ];
 
-$ending = $endingMap[$endingSlug] ?? ['label' => 'Unknown Ending', 'css' => 'ending-tragic'];
-$summary = !empty($hero) ? generateHeroSummary($hero, $ending['label']) : '';
+$ending      = $endingMap[$endingSlug] ?? ['label' => 'Unknown Ending', 'css' => 'ending-tragic'];
+$finalScore  = !empty($hero) ? calculateScore($hero) : 0;
+$summary     = !empty($hero) ? generateHeroSummary($hero, $ending['label']) : '';
 
 if (!empty($hero)) {
-    $_SESSION['leaderboard'][] = [
-        'username'  => $_SESSION['user'] ?? 'Unknown',
-        'name'      => $hero['name'] ?? '—',
-        'class'     => $hero['class'] ?? '—',
-        'score'     => $hero['score'] ?? 0,
-        'ending'    => $ending['label'],
-        'timestamp' => date('Y-m-d H:i'),
-    ];
+    $_SESSION['hero']['score'] = $finalScore;
+    $_SESSION['leaderboard'][] = buildLeaderboardEntry($hero, $ending['label']);
 }
 
 setcookie('taddle_node', '', time() - 1, '/');
@@ -40,9 +35,7 @@ setcookie('taddle_node', '', time() - 1, '/');
 <body class="ending-page <?= $ending['css'] ?>">
 <div class="ending-card">
 
-    <div class="ending-title-wrap">
-        <h1 class="ending-title"><?= htmlspecialchars($ending['label']) ?></h1>
-    </div>
+    <h1 class="ending-title"><?= htmlspecialchars($ending['label']) ?></h1>
 
     <?php if ($summary): ?>
         <p class="hero-summary"><?= htmlspecialchars($summary) ?></p>
@@ -52,7 +45,7 @@ setcookie('taddle_node', '', time() - 1, '/');
     <div class="ending-stats">
         <div class="ending-stat">
             <span class="ending-stat-label">Final score</span>
-            <span class="ending-stat-val"><?= $hero['score'] ?? 0 ?></span>
+            <span class="ending-stat-val"><?= $finalScore ?></span>
         </div>
         <div class="ending-stat">
             <span class="ending-stat-label">HP remaining</span>

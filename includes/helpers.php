@@ -70,10 +70,10 @@ function applyStatCost(array $choice, array &$hero): void {
             ));
         }
     }
-    if (!empty($cost['item'])) {
+    if (!empty($cost['item']) && !in_array($cost['item'], $hero['inventory'], true)) {
         $hero['inventory'][] = $cost['item'];
     }
-    $hero['score'] += $cost['score'] ?? 10;
+    $hero['score'] = max(0, $hero['score'] + ($cost['score'] ?? 10));
 }
 
 function getConsequencePreview(array $choice): string {

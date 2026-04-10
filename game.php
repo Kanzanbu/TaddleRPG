@@ -36,6 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!in_array($choiceId, $validIds, true)) {
             $error = 'Invalid choice.';
+        } elseif ($choiceId === '') {
+            $error = 'No choice submitted.';
         } else {
             $choice = $node['choices'][array_search($choiceId, $validIds)];
 
@@ -58,6 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $next = $storyTree[$choice['next']] ?? null;
+                if ($next === null) {
+                    $_SESSION['node'] = 'node_01';
+                    header('Location: game.php');
+                    exit;
+                }
                 if (!empty($next['terminal'])) {
                     $ending = resolveEnding($_SESSION['hero']);
                     header('Location: ending.php?ending=' . urlencode($ending));
@@ -94,7 +101,7 @@ require 'includes/layout.php';
     <div class="game-topbar">
         <span class="topbar-brand">TaddleRPG</span>
         <span class="topbar-player"><?= htmlspecialchars($hero['name']) ?> · <?= ucfirst($hero['class']) ?></span>
-        <span class="topbar-score"><?= $hero['score'] ?> pts</span>
+        <span class="topbar-score"><?= calculateScore($hero) ?> pts</span>
     </div>
 
     <main class="story-panel">

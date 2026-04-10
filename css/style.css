@@ -251,3 +251,71 @@ input::placeholder { color:var(--dim); opacity:.6; }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.01ms !important; animation-delay:.01ms !important; transition-duration:.01ms !important; }
 }
+
+
+/* ── Day 10 — cross-browser fixes & CSS refinement ── */
+
+/* Firefox: range input styling */
+input[type="range"] { appearance: none; -moz-appearance: none; }
+
+/* Safari: -webkit-text-fill-color fallback for shimmer titles */
+@supports not (background-clip: text) {
+    .ending-heroic .ending-title,
+    .ending-secret .ending-title {
+        -webkit-text-fill-color: unset;
+        color: var(--ea, var(--gold));
+    }
+    .lb-rank-1 td:nth-child(2) {
+        -webkit-text-fill-color: unset;
+        color: var(--goldb);
+    }
+}
+
+/* Safari: backdrop-filter needs -webkit prefix */
+.game-topbar {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+/* Firefox: :has() fallback — class-option selected state */
+.class-option.selected {
+    border-color: rgba(201,168,76,.5);
+    background: var(--s3);
+}
+
+/* IE/old-edge: color-mix fallback for ending card glow */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+    .ending-heroic  .ending-card { box-shadow: 0 0 60px rgba(201,168,76,.12), inset 0 1px 0 rgba(201,168,76,.15); }
+    .ending-neutral .ending-card { box-shadow: 0 0 60px rgba(74,128,176,.12), inset 0 1px 0 rgba(74,128,176,.15); }
+    .ending-tragic  .ending-card { box-shadow: 0 0 60px rgba(176,48,48,.12),  inset 0 1px 0 rgba(176,48,48,.2); }
+    .ending-secret  .ending-card { box-shadow: 0 0 60px rgba(138,74,170,.12), inset 0 1px 0 rgba(138,74,170,.2); }
+}
+
+/* Prevent layout shift during font load */
+.auth-title, .create-title, .lb-title, .ending-title {
+    font-display: swap;
+}
+
+/* Smoother choice button active state on touch devices */
+@media (hover: none) {
+    .choice-wrapper .consequence-preview {
+        max-height: 3rem;
+        opacity: 1;
+        margin-top: 3px;
+    }
+    .choice-btn:not(.btn-locked):active {
+        border-color: rgba(201,168,76,.35);
+        background: var(--s3);
+    }
+}
+
+/* Fix: story-text cursor blink not rendering on some mobile browsers */
+@supports not (animation: cursor 1s step-end infinite) {
+    .story-text::after { display: none; }
+}
+
+/* Fix: stat-fill animation flicker in Safari on repaint */
+.stat-fill { will-change: width; }
+
+/* Fix: sticky topbar z-index on iOS Safari */
+.game-topbar { transform: translateZ(0); -webkit-transform: translateZ(0); }

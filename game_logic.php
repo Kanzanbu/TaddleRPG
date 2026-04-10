@@ -61,10 +61,11 @@ function validateSession(): bool {
         if (!array_key_exists($key, $_SESSION['hero'])) return false;
     }
 
-    $factions = ['vipers', 'guild', 'watch'];
-    foreach ($factions as $f) {
+    foreach (['vipers', 'guild', 'watch'] as $f) {
         if (!array_key_exists($f, $_SESSION['hero']['faction_trust'])) return false;
     }
+
+    if (!in_array($_SESSION['hero']['class'], ['warrior', 'mage', 'rogue'], true)) return false;
 
     return true;
 }
@@ -91,6 +92,14 @@ function repairSession(): void {
             $_SESSION['hero'][$key] = $value;
         }
     }
+
+    foreach (['vipers', 'guild', 'watch'] as $f) {
+        if (!isset($_SESSION['hero']['faction_trust'][$f])) {
+            $_SESSION['hero']['faction_trust'][$f] = 50;
+        }
+    }
+
+    $_SESSION['hero']['health'] = max(0, min(100, (int) $_SESSION['hero']['health']));
 
     if (!isset($_SESSION['node'])) {
         $_SESSION['node'] = 'node_01';

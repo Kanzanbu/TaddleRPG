@@ -76,13 +76,20 @@ $node     = $storyTree[$nodeId] ?? null;
 $hero     = $_SESSION['hero'];
 $progress = getGameProgress($hero, $storyTree);
 $dominant = resolveDominantFaction($hero);
+$hpClass  = $hero['health'] <= 20 ? 'hp-critical' : ($hero['health'] <= 40 ? 'hp-low' : '');
 
 $pageTitle = 'TaddleRPG';
 $bodyClass = 'game-page';
 require 'includes/layout.php';
 ?>
 
-<div class="game-layout">
+<div class="game-layout <?= $hpClass ?>">
+
+    <?php if ($hero['health'] <= 20): ?>
+    <div class="hp-warning-bar">
+        ⚠ Critical HP — one wrong choice ends your run
+    </div>
+    <?php endif; ?>
 
     <div class="game-topbar">
         <span class="topbar-brand">TaddleRPG</span>
@@ -146,8 +153,8 @@ require 'includes/layout.php';
 
             <div class="stat-row">
                 <span class="stat-label">HP</span>
-                <div class="stat-track"><div class="stat-fill fill-hp" style="width:<?= $hero['health'] ?>%"></div></div>
-                <span class="stat-val"><?= $hero['health'] ?></span>
+                <div class="stat-track"><div class="stat-fill fill-hp <?= $hpClass ?>" style="width:<?= $hero['health'] ?>%"></div></div>
+                <span class="stat-val <?= $hpClass ?>"><?= $hero['health'] ?></span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">STR</span>

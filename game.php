@@ -104,7 +104,11 @@ require 'includes/layout.php';
 
         <?php if ($node): ?>
             <div class="node-container">
-                <div class="node-act">Act</div>
+                <?php
+                    $choiceCount = count($hero['choices_log'] ?? []);
+                    $act = $choiceCount < 4 ? 'Act I' : ($choiceCount < 9 ? 'Act II' : 'Act III');
+                ?>
+                <div class="node-act"><?= $act ?> · Node <?= htmlspecialchars($nodeId) ?></div>
                 <p class="story-text"><?= htmlspecialchars($node['text']) ?></p>
             </div>
 

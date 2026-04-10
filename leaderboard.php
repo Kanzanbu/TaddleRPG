@@ -42,17 +42,17 @@ require 'includes/layout.php';
                 <?php foreach ($leaderboard as $rank => $entry): ?>
                 <tr class="<?= $rank === 0 ? 'lb-rank-1' : '' ?>">
                     <td class="td-rank"><?= $rank + 1 ?></td>
-                    <td><?= htmlspecialchars($entry['username']) ?></td>
-                    <td><?= htmlspecialchars($entry['name']) ?></td>
-                    <td><?= htmlspecialchars(ucfirst($entry['class'])) ?></td>
-                    <td class="td-score"><?= (int)$entry['score'] ?></td>
+                    <td><?= htmlspecialchars($entry['username'] ?? '—') ?></td>
+                    <td><?= htmlspecialchars($entry['name'] ?? '—') ?></td>
+                    <td><?= htmlspecialchars(ucfirst($entry['class'] ?? '—')) ?></td>
+                    <td class="td-score"><?= (int)($entry['score'] ?? 0) ?></td>
                     <td class="td-faction"><?= htmlspecialchars(ucfirst($entry['faction'] ?? '—')) ?></td>
                     <td>
-                        <span class="ending-pill <?= $pillMap[$entry['ending']] ?? '' ?>">
-                            <?= htmlspecialchars($entry['ending']) ?>
+                        <span class="ending-pill <?= $pillMap[$entry['ending'] ?? ''] ?? '' ?>">
+                            <?= htmlspecialchars($entry['ending'] ?? '—') ?>
                         </span>
                     </td>
-                    <td class="td-date"><?= htmlspecialchars($entry['timestamp']) ?></td>
+                    <td class="td-date"><?= htmlspecialchars($entry['timestamp'] ?? '—') ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

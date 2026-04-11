@@ -206,22 +206,153 @@ $storyTree = [
 
     'node_08' => [
         'id'   => 'node_08',
-        'text' => 'Veyne studies the documents in silence. Then she smiles — a rare thing. "You\'ve just become the most valuable person in this city." She hands you a sealed envelope bearing the Guild crest.',
+        'text' => 'Veyne studies the documents in silence for a long moment. Then, slowly, she smiles — a rare thing on that careful face. "You have just made yourself the most valuable person in this city." She slides a sealed envelope across the table, Guild crest pressed into wax.',
         'choices' => [
             [
                 'id'         => 'c08a',
-                'text'       => 'Open the envelope immediately',
-                'next'       => 'node_07',
+                'text'       => 'Open it immediately',
+                'next'       => 'node_13',
                 'requires'   => [],
                 'stat_cost'  => ['score' => 20, 'item' => 'guild_seal'],
-                'ai_preview' => 'Adds Guild Seal — powerful item for Act 3.',
+                'ai_preview' => 'Adds Guild Seal — unlocks a hidden path in Act 3.',
+            ],
+            [
+                'id'         => 'c08b',
+                'text'       => 'Pocket it unopened and leave',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['score' => 10, 'guild' => 5],
+                'ai_preview' => 'Keeps options open. Guild trust +5.',
+            ],
+        ],
+    ],
+
+    'node_13' => [
+        'id'   => 'node_13',
+        'text' => 'Inside: a map of the Vipers\' underground network, annotated in a hand you recognise as Sable\'s. Someone inside the Vipers has been feeding information to the Guild for months. Sable is a double agent — and she doesn\'t know you know.',
+        'choices' => [
+            [
+                'id'         => 'c13a',
+                'text'       => 'Confront Sable directly',
+                'next'       => 'node_14',
+                'requires'   => ['strength' => 30],
+                'stat_cost'  => ['health' => -10, 'vipers' => -15, 'guild' => 10, 'score' => 20],
+                'ai_preview' => 'Requires 30 STR. Risky — costs 10 HP, Vipers -15.',
+            ],
+            [
+                'id'         => 'c13b',
+                'text'       => 'Use the map to blackmail both sides',
+                'next'       => 'node_15',
+                'requires'   => [],
+                'stat_cost'  => ['vipers' => 10, 'guild' => 10, 'score' => 30],
+                'ai_preview' => 'Both factions +10 trust. High-risk, high-reward.',
+            ],
+            [
+                'id'         => 'c13c',
+                'text'       => 'Hand the map to Captain Aldric',
+                'next'       => 'node_16',
+                'requires'   => ['item' => 'watch_badge'],
+                'stat_cost'  => ['watch' => 25, 'score' => 25],
+                'ai_preview' => 'Requires Watch Badge. Watch trust +25.',
+            ],
+        ],
+    ],
+
+    'node_14' => [
+        'id'   => 'node_14',
+        'text' => 'Sable doesn\'t flinch. "So you figured it out." She leans back, arms crossed. "Question is what you do with it. The Vipers will burn this city if the Reckoning fails. The Guild needs that map back — and so do you." She offers her hand.',
+        'choices' => [
+            [
+                'id'         => 'c14a',
+                'text'       => 'Take her hand — unlikely allies',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['vipers' => 15, 'guild' => 15, 'score' => 25],
+                'ai_preview' => 'Both factions +15. Strong position heading into Act 3.',
+            ],
+            [
+                'id'         => 'c14b',
+                'text'       => 'Walk away — trust no one',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['score' => 10],
+                'ai_preview' => 'No faction cost. Keeps independence but weakens alliances.',
+            ],
+        ],
+    ],
+
+    'node_15' => [
+        'id'   => 'node_15',
+        'text' => 'The blackmail works — for now. Both factions pay. Both factions seethe. You have money, leverage, and a very short window before one of them decides you\'re more dangerous alive than dead. Pip finds you in the market. "The Reckoning\'s been moved up. Tomorrow at dawn."',
+        'choices' => [
+            [
+                'id'         => 'c15a',
+                'text'       => 'Use your leverage to broker a truce before dawn',
+                'next'       => 'node_07',
+                'requires'   => ['strength' => 25],
+                'stat_cost'  => ['score' => 35, 'health' => -5],
+                'ai_preview' => 'Requires 25 STR. Best score outcome. Costs 5 HP.',
+            ],
+            [
+                'id'         => 'c15b',
+                'text'       => 'Disappear before it starts',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['score' => 15],
+                'ai_preview' => 'Safe exit. Lower score but no risk.',
+            ],
+        ],
+    ],
+
+    'node_16' => [
+        'id'   => 'node_16',
+        'text' => 'Aldric studies the map for a long time. "This changes everything." He rolls it carefully and locks it in a strongbox. "We move at first light. I need someone inside the Vipers\' meeting hall at the third bell. Someone they won\'t recognise." He looks at you.',
+        'choices' => [
+            [
+                'id'         => 'c16a',
+                'text'       => 'Accept — go in as a Vipers contact',
+                'next'       => 'node_17',
+                'requires'   => [],
+                'stat_cost'  => ['watch' => 10, 'health' => -10, 'score' => 30],
+                'ai_preview' => 'High risk. Watch trust +10, costs 10 HP.',
+            ],
+            [
+                'id'         => 'c16b',
+                'text'       => 'Decline — provide the Watch with everything you know instead',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['watch' => 20, 'score' => 20],
+                'ai_preview' => 'Safer. Watch trust +20.',
+            ],
+        ],
+    ],
+
+    'node_17' => [
+        'id'   => 'node_17',
+        'text' => 'The Vipers\' hall smells of tallow and damp stone. You are three minutes into listening to the Reckoning\'s final plan when a hand lands on your shoulder. It is Sable. She leans close. "I knew you\'d come. I left the back door open for a reason." She slips you a key.',
+        'choices' => [
+            [
+                'id'         => 'c17a',
+                'text'       => 'Take the key and slip out the back',
+                'next'       => 'node_07',
+                'requires'   => [],
+                'stat_cost'  => ['score' => 25, 'vipers' => 10],
+                'ai_preview' => 'Clean exit. Vipers trust +10.',
+            ],
+            [
+                'id'         => 'c17b',
+                'text'       => 'Stay and memorise everything — then signal the Watch',
+                'next'       => 'node_07',
+                'requires'   => ['watch' => 50],
+                'stat_cost'  => ['watch' => 20, 'score' => 40, 'health' => -15],
+                'ai_preview' => 'Requires 50 Watch trust. Best Watch path score. Costs 15 HP.',
             ],
         ],
     ],
 
     'node_09' => [
         'id'      => 'node_09',
-        'text'    => 'The Reckoning erupts. The Guild and Watch crumble under the Vipers\' coordinated strike. You stand at Sable\'s side as the smoke clears. The city is theirs — and yours.',
+        'text'    => 'The Reckoning ignites the lower city at midnight. Fire and fracture. By the time the smoke clears, the Guild and Watch are broken, their leaders in exile or chains. Sable raises a glass across the smouldering rubble. The city belongs to the Vipers now — and you are one of them.',
         'terminal'=> true,
         'ending'  => 'Heroic Victory',
         'choices' => [],
@@ -229,7 +360,7 @@ $storyTree = [
 
     'node_10' => [
         'id'      => 'node_10',
-        'text'    => 'The Vipers are dismantled. Veyne and the Guild ascend, with you credited as the key informant. Your name is legend in certain circles — and a curse in others.',
+        'text'    => 'The Vipers splinter overnight, undone by the very documents you delivered. Veyne steps into the vacuum with quiet authority, the Guild ascending as the city\'s new order. She names you a consultant — the word is a polite fiction for something far more dangerous and far better paid.',
         'terminal'=> true,
         'ending'  => 'Neutral Victory',
         'choices' => [],
@@ -237,7 +368,7 @@ $storyTree = [
 
     'node_11' => [
         'id'      => 'node_11',
-        'text'    => 'All three factions implode simultaneously. In the chaos you slip away with enough secrets to disappear entirely. Nobody even knows your real name.',
+        'text'    => 'All three faction leaders receive the same package at dawn: everything, on everyone. The city erupts. In the chaos you walk to the south gate with a single bag and do not look back. Three organisations are hunting you. None of them know your name. That was always the point.',
         'terminal'=> true,
         'ending'  => 'Secret Path',
         'choices' => [],
@@ -245,7 +376,7 @@ $storyTree = [
 
     'node_12' => [
         'id'      => 'node_12',
-        'text'    => 'Captain Aldric\'s Watch sweeps the city. Every faction leader faces justice. You testify under oath and walk out a free citizen.',
+        'text'    => 'Aldric\'s Watch moves at first light, precise and coordinated, every faction head arrested before breakfast. You testify before a magistrate at noon. By evening, the city is quieter than it has been in years. You step outside the courthouse into clean air and walk east, a free citizen with a clear name.',
         'terminal'=> true,
         'ending'  => 'Heroic Victory',
         'choices' => [],
@@ -253,7 +384,7 @@ $storyTree = [
 
     'node_tragic' => [
         'id'      => 'node_tragic',
-        'text'    => 'Your wounds catch up with you in a damp alley. The city carries on without you.',
+        'text'    => 'The city finds you before you find your footing. A narrow alley, a wound that will not close, a morning that does not come. Somewhere above the rooftops, the factions carry on their business without you. They always do.',
         'terminal'=> true,
         'ending'  => 'Tragic Failure',
         'choices' => [],

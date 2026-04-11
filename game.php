@@ -104,7 +104,7 @@ require 'includes/layout.php';
         <span class="topbar-score"><?= calculateScore($hero) ?> pts</span>
     </div>
 
-    <main class="story-panel">
+    <main class="story-panel" id="main-content">
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
@@ -211,11 +211,16 @@ require 'includes/layout.php';
                 <?php endforeach; ?>
             </ul>
         </div>
+        <?php else: ?>
+        <div class="sidebar-section">
+            <p class="sidebar-heading">Inventory</p>
+            <p class="inventory-empty">Nothing yet.</p>
+        </div>
         <?php endif; ?>
 
         <?php if (!empty($hero['choices_log'])): ?>
         <div class="sidebar-section">
-            <p class="sidebar-heading">Your Path</p>
+            <p class="sidebar-heading">Your Path <span class="path-count"><?= count($hero['choices_log']) ?></span></p>
             <ol class="choice-log">
                 <?php foreach ($hero['choices_log'] as $entry): ?>
                     <li><?= htmlspecialchars($entry['choice']) ?></li>

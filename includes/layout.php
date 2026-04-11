@@ -22,3 +22,4 @@ if (!isset($bodyClass)) $bodyClass = '';
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="<?= htmlspecialchars($bodyClass) ?>">
+<a href="#main-content" class="skip-link">Skip to content</a>

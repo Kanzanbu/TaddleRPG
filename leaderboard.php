@@ -39,8 +39,10 @@ require 'includes/layout.php';
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($leaderboard as $rank => $entry): ?>
-                <tr class="<?= $rank === 0 ? 'lb-rank-1' : '' ?>">
+                <?php foreach ($leaderboard as $rank => $entry):
+                    $isMine = ($entry['username'] ?? '') === ($_SESSION['user'] ?? '');
+                ?>
+                <tr class="<?= $rank === 0 ? 'lb-rank-1' : '' ?> <?= $isMine ? 'lb-mine' : '' ?>">
                     <td class="td-rank"><?= $rank + 1 ?></td>
                     <td><?= htmlspecialchars($entry['username'] ?? '—') ?></td>
                     <td><?= htmlspecialchars($entry['name'] ?? '—') ?></td>

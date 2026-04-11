@@ -256,7 +256,7 @@ input::placeholder { color:var(--dim); opacity:.6; }
 /* ── Day 10 — cross-browser fixes & CSS refinement ── */
 
 /* Firefox: range input styling */
-input[type="range"] { appearance: none; -moz-appearance: none; }
+input[type="range"] { -moz-appearance: none; appearance: none; }
 
 /* Safari: -webkit-text-fill-color fallback for shimmer titles */
 @supports not (background-clip: text) {
@@ -318,4 +318,104 @@ input[type="range"] { appearance: none; -moz-appearance: none; }
 .stat-fill { will-change: width; }
 
 /* Fix: sticky topbar z-index on iOS Safari */
-.game-topbar { transform: translateZ(0); -webkit-transform: translateZ(0); }
+.game-topbar { -webkit-transform: translateZ(0); transform: translateZ(0); }
+
+
+/* ── Day 11 — UX refinement & performance ── */
+
+/* Contain layout/paint for sidebar and story panel */
+.stat-sidebar  { contain: layout style; }
+.story-panel   { contain: layout style; }
+.choice-btn    { contain: layout style; }
+
+/* GPU-composite only properties on animated elements */
+.stat-fill     { will-change: width; }
+.progress-fill { will-change: background-position; }
+.ending-title  { will-change: letter-spacing, opacity; }
+
+/* Prevent invisible reflow on font swap */
+html { font-synthesis: none; }
+
+/* Smooth scroll for choice log growth */
+.choice-log { scroll-behavior: smooth; max-height: 180px; overflow-y: auto; }
+.choice-log::-webkit-scrollbar { width: 3px; }
+.choice-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Focus-visible — keyboard nav only, no mouse rings */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid rgba(201,168,76,.5); outline-offset: 2px; }
+
+/* Skip-to-content link for accessibility */
+.skip-link {
+    position: absolute; top: -100%; left: 1rem;
+    background: var(--gold); color: #080a0e;
+    padding: .4rem .9rem; border-radius: var(--r);
+    font-family: var(--mono); font-size: .78rem;
+    z-index: 9999; transition: top .15s;
+}
+.skip-link:focus { top: .5rem; }
+
+/* Improved empty state for inventory */
+.inventory-empty {
+    font-family: var(--mono); font-size: .7rem;
+    color: var(--dim); font-style: italic;
+}
+
+/* Choice count badge on sidebar path tracker */
+.path-count {
+    float: right;
+    font-family: var(--mono); font-size: .62rem;
+    background: var(--s3); border: 1px solid var(--border);
+    color: var(--dim); padding: 1px 6px; border-radius: 3px;
+}
+
+/* Node ID hidden on production — show only in debug */
+.node-id-label { display: none; }
+
+/* Topbar score transition on change */
+.topbar-score { transition: color .4s, opacity .3s; }
+
+/* Smoother sidebar stat bar stagger */
+.sidebar-section:nth-child(1) .stat-fill { animation-delay: .15s; }
+.sidebar-section:nth-child(2) .stat-fill { animation-delay: .30s; }
+.sidebar-section:nth-child(3) .stat-fill { animation-delay: .45s; }
+
+/* Prevent text select on choice buttons */
+.choice-btn { user-select: none; -webkit-user-select: none; }
+
+/* Auth card max-width bump for readability */
+@media (min-width: 480px) {
+    .auth-card { padding: 3rem 2.5rem; }
+}
+
+/* Create card class grid description line-clamp */
+.class-desc {
+    display: -webkit-box;
+    line-clamp: 3;
+    box-orient: vertical;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Game over — ending card on small screens */
+@media (max-width: 480px) {
+    .ending-card { padding: 2.5rem 1.5rem; }
+    .ending-title { font-size: 2.2rem; }
+    .ending-stats { gap: 1.2rem; }
+    .ending-stat-val { font-size: 1.5rem; }
+}
+
+/* Leaderboard — score column right-aligned */
+.lb-table th:nth-child(5),
+.lb-table td:nth-child(5) { text-align: right; }
+
+/* Leaderboard — highlight current user's rows */
+.lb-mine td { border-left: 2px solid rgba(201,168,76,.35); }
+
+/* Print styles — clean leaderboard printout */
+@media print {
+    .game-topbar, .stat-sidebar, .site-footer, .ending-actions, .lb-actions { display: none; }
+    body { background: #fff; color: #000; }
+    .lb-table td, .lb-table th { border-color: #ccc; color: #000; }
+}

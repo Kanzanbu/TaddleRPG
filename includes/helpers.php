@@ -6,12 +6,12 @@ function sanitise(string $input): string {
 }
 
 function getClassStats(string $class): array {
-    return match ($class) {
-        'warrior' => ['health' => 100, 'strength' => 40, 'mana' => 0],
-        'mage'    => ['health' => 60,  'strength' => 15, 'mana' => 45],
-        'rogue'   => ['health' => 70,  'strength' => 25, 'mana' => 10],
-        default   => ['health' => 80,  'strength' => 20, 'mana' => 0],
-    };
+    switch ($class) {
+        case 'warrior': return ['health' => 100, 'strength' => 40, 'mana' => 0];
+        case 'mage':    return ['health' => 60,  'strength' => 15, 'mana' => 45];
+        case 'rogue':   return ['health' => 70,  'strength' => 25, 'mana' => 10];
+        default:        return ['health' => 80,  'strength' => 20, 'mana' => 0];
+    }
 }
 
 function isChoiceLocked(array $choice, array $hero): bool {

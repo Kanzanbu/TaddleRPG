@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTitle = 'Register';
 $bodyClass = 'auth-page';
-require 'includes/layout.php';
+require __DIR__ . '/includes/layout.php';
 ?>
 
 <div class="auth-lockup">
@@ -62,7 +62,7 @@ require 'includes/layout.php';
         <button type="submit" class="btn btn-primary" style="margin-top:0.5rem">Create account</button>
     </form>
 
-    <p class="auth-switch">Already have an account? <a href="login.php">Log in</a></p>
+    <p class="auth-switch">Already have an account? <a class="btn btn-secondary" href="./login.php">Log in</a></p>
 </div>
 
-<?php require 'includes/layout_foot.php'; ?>
+<?php require __DIR__ . '/includes/layout_foot.php'; ?>

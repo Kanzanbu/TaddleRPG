@@ -1,8 +1,8 @@
 <?php
 // includes/game_logic.php
 
-require_once 'includes/helpers.php';
-require_once 'includes/story_tree.php';
+require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/story_tree.php';
 
 function calculateScore(array $hero): int {
     $base    = $hero['score'];

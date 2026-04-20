@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/session_guard.php';
+require_once __DIR__ . '/includes/session_guards.php';
 
 $leaderboard = $_SESSION['leaderboard'] ?? [];
 usort($leaderboard, fn($a, $b) => $b['score'] <=> $a['score']);

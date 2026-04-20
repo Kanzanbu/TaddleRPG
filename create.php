@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/session_guard.php';
-require_once 'includes/helpers.php';
+require_once __DIR__ . '/includes/session_guards.php';
+require_once __DIR__ . '/includes/helpers.php';
 
 $error = '';
 
